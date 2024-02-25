@@ -87,6 +87,7 @@ class Products(models.Model):
     first_price = models.IntegerField(verbose_name='Первоначальная цена')
     discount = models.FloatField(verbose_name='Скидка', default=0, blank=True)
     last_price = models.IntegerField(verbose_name='Конечная  цена', blank=True, null=True)
+    numbers = models.PositiveIntegerField(verbose_name='Количество продуктов', default=0)
     category = models.ForeignKey('Category', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Категория')
     slug = models.SlugField(max_length=70, unique=True, db_index=True, verbose_name='URL', )
     description = models.TextField(verbose_name="О продукте", blank=True)

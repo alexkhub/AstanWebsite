@@ -33,6 +33,8 @@ DEBUG_TOOLBAR_CONFIG = {
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     'sortedm2m',
     'django_filters',
+    'crispy_forms',
     'rest_framework.authtoken',
     'core.apps.CoreConfig',
 ]
@@ -60,6 +63,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'website.urls'
+
+#admin
+X_FRAME_OPTIONS = "SAMEORIGIN"              # allows you to use modals insated of popups
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 TEMPLATES = [
     {
