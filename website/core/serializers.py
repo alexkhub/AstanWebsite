@@ -48,3 +48,15 @@ class ManufacturerSerializer(serializers.ModelSerializer):
         model = Manufacturer
         read_only = ('owner.username',)
         fields = ("manufacturer_name", "slug", "photo")
+
+
+class ProductsListSerializer(serializers.ModelSerializer):
+    """сериализатор для вывода продуктов"""
+    product_photos = ProductImagesListSerializer(many=True, read_only=True)
+    category = serializers.SlugRelatedField(slug_field='slug', read_only=True)
+    manufacturer = serializers.SlugRelatedField(slug_field='slug', read_only=True)
+
+    class Meta:
+        model = Products
+        read_only = ('owner.username',)
+        exclude = ('numbers', 'product_characteristic', 'first_price', 'description',)

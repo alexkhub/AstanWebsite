@@ -91,19 +91,20 @@
         <section class="product__section product__categories--section section--padding">
             <div class="container">
                 <div class="section__heading text-center mb-40">
-                    <span class="section__heading--subtitle">Recently added our store</span>
-                    <h2 class="section__heading--maintitle">Our Hottest Categories</h2>
+
+                    <h2 class="section__heading--maintitle">Наши самые популярные категории</h2>
                 </div>
                 <div class="product__section--inner product__swiper--activation swiper">
                     <div class="swiper-wrapper">
+                        {%for category in category_serializer %}
                         <div class="swiper-slide">
                             <div class="product__items product__bg">
                                 <div class="product__items--thumbnail">
-                                    <a class="product__items--link" href="shop.html"><img class="product__items--img" src="assets/img/product/categories1.png" alt="categories-img">
+                                    <a class="product__items--link" href="{%url 'product_category' category.slug%}"><img class="product__items--img" src="{{category.category_photo}}" alt="categories-img">
                                         <div class="product__categories--content d-flex justify-content-between align-items-center">
                                             <div class="product__categories--content__left">
-                                                <h3 class="product__categories--content__maintitle">Raw-steak</h3>
-                                                <span class="product__categories--content__subtitle">99 items</span>
+                                                <h3 class="product__categories--content__maintitle">{{category.name}}</h3>
+
                                             </div>
                                             <div class="product__categories--icon">
                                                 <span class="product__categories--icon__link">
@@ -117,90 +118,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="swiper-slide">
-                            <div class="product__items product__bg">
-                                <div class="product__items--thumbnail">
-                                    <a class="product__items--link" href="shop.html"><img class="product__items--img" src="assets/img/product/categories2.png" alt="categories-img">
-                                        <div class="product__categories--content d-flex justify-content-between align-items-center">
-                                            <div class="product__categories--content__left">
-                                                <h3 class="product__categories--content__maintitle">Broccoli</h3>
-                                                <span class="product__categories--content__subtitle">88 items</span>
-                                            </div>
-                                            <div class="product__categories--icon">
-                                                <span class="product__categories--icon__link">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="15.995" height="10.979" viewBox="0 0 15.995 10.979">
-                                                        <path  d="M212.706,299.839a.425.425,0,0,0,0-.6l-3.458-3.458a.425.425,0,0,1,0-.6l1.008-1.008a.425.425,0,0,1,.6,0l5.065,5.065a.425.425,0,0,1,0,.6l-5.065,5.066a.425.425,0,0,1-.6,0l-1.008-1.008a.425.425,0,0,1,0-.6Zm-6.305-.3a2.215,2.215,0,1,0,2.216-2.216A2.215,2.215,0,0,0,206.4,299.541Zm-3.634,0a1.6,1.6,0,1,0,1.6-1.605A1.6,1.6,0,0,0,202.767,299.541Zm-2.717,0a1.154,1.154,0,1,0,1.154-1.154A1.155,1.155,0,0,0,200.05,299.541Z" transform="translate(-200.05 -294.05)" fill="currentColor"/>
-                                                    </svg>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="product__items product__bg">
-                                <div class="product__items--thumbnail">
-                                    <a class="product__items--link" href="shop.html"><img class="product__items--img" src="assets/img/product/categories3.png" alt="categories-img">
-                                        <div class="product__categories--content d-flex justify-content-between align-items-center">
-                                            <div class="product__categories--content__left">
-                                                <h3 class="product__categories--content__maintitle">Cabbage</h3>
-                                                <span class="product__categories--content__subtitle">90 items</span>
-                                            </div>
-                                            <div class="product__categories--icon">
-                                                <span class="product__categories--icon__link">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="15.995" height="10.979" viewBox="0 0 15.995 10.979">
-                                                        <path  d="M212.706,299.839a.425.425,0,0,0,0-.6l-3.458-3.458a.425.425,0,0,1,0-.6l1.008-1.008a.425.425,0,0,1,.6,0l5.065,5.065a.425.425,0,0,1,0,.6l-5.065,5.066a.425.425,0,0,1-.6,0l-1.008-1.008a.425.425,0,0,1,0-.6Zm-6.305-.3a2.215,2.215,0,1,0,2.216-2.216A2.215,2.215,0,0,0,206.4,299.541Zm-3.634,0a1.6,1.6,0,1,0,1.6-1.605A1.6,1.6,0,0,0,202.767,299.541Zm-2.717,0a1.154,1.154,0,1,0,1.154-1.154A1.155,1.155,0,0,0,200.05,299.541Z" transform="translate(-200.05 -294.05)" fill="currentColor"/>
-                                                    </svg>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="product__items product__bg">
-                                <div class="product__items--thumbnail">
-                                    <a class="product__items--link" href="shop.html"><img class="product__items--img" src="assets/img/product/categories4.png" alt="categories-img">
-                                        <div class="product__categories--content d-flex justify-content-between align-items-center">
-                                            <div class="product__categories--content__left">
-                                                <h3 class="product__categories--content__maintitle">Raw-onions</h3>
-                                                <span class="product__categories--content__subtitle">92 items</span>
-                                            </div>
-                                            <div class="product__categories--icon">
-                                                <span class="product__categories--icon__link">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="15.995" height="10.979" viewBox="0 0 15.995 10.979">
-                                                        <path  d="M212.706,299.839a.425.425,0,0,0,0-.6l-3.458-3.458a.425.425,0,0,1,0-.6l1.008-1.008a.425.425,0,0,1,.6,0l5.065,5.065a.425.425,0,0,1,0,.6l-5.065,5.066a.425.425,0,0,1-.6,0l-1.008-1.008a.425.425,0,0,1,0-.6Zm-6.305-.3a2.215,2.215,0,1,0,2.216-2.216A2.215,2.215,0,0,0,206.4,299.541Zm-3.634,0a1.6,1.6,0,1,0,1.6-1.605A1.6,1.6,0,0,0,202.767,299.541Zm-2.717,0a1.154,1.154,0,1,0,1.154-1.154A1.155,1.155,0,0,0,200.05,299.541Z" transform="translate(-200.05 -294.05)" fill="currentColor"/>
-                                                    </svg>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="product__items product__bg">
-                                <div class="product__items--thumbnail">
-                                    <a class="product__items--link" href="shop.html"><img class="product__items--img" src="assets/img/product/categories2.png" alt="categories-img">
-                                        <div class="product__categories--content d-flex justify-content-between align-items-center">
-                                            <div class="product__categories--content__left">
-                                                <h3 class="product__categories--content__maintitle">Broccoli</h3>
-                                                <span class="product__categories--content__subtitle">88 items</span>
-                                            </div>
-                                            <div class="product__categories--icon">
-                                                <span class="product__categories--icon__link">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="15.995" height="10.979" viewBox="0 0 15.995 10.979">
-                                                        <path  d="M212.706,299.839a.425.425,0,0,0,0-.6l-3.458-3.458a.425.425,0,0,1,0-.6l1.008-1.008a.425.425,0,0,1,.6,0l5.065,5.065a.425.425,0,0,1,0,.6l-5.065,5.066a.425.425,0,0,1-.6,0l-1.008-1.008a.425.425,0,0,1,0-.6Zm-6.305-.3a2.215,2.215,0,1,0,2.216-2.216A2.215,2.215,0,0,0,206.4,299.541Zm-3.634,0a1.6,1.6,0,1,0,1.6-1.605A1.6,1.6,0,0,0,202.767,299.541Zm-2.717,0a1.154,1.154,0,1,0,1.154-1.154A1.155,1.155,0,0,0,200.05,299.541Z" transform="translate(-200.05 -294.05)" fill="currentColor"/>
-                                                    </svg>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                        {%endfor%}
+
+
+
+
                     </div>
                     <div class="swiper__nav--btn swiper-button-next"></div>
                     <div class="swiper__nav--btn swiper-button-prev"></div>
@@ -213,17 +135,9 @@
         <section class="product__section section--padding pt-0">
             <div class="container">
                 <div class="section__heading text-center mb-25">
-                    <span class="section__heading--subtitle">Recently added our store</span>
+
                     <h2 class="section__heading--maintitle">Trending Products</h2>
                 </div>
-                <ul class="product__tab--one product__tab--btn d-flex justify-content-center mb-35">
-                    <li class="product__tab--btn__list active" data-toggle="tab" data-target="#product_all">All</li>
-                    <li class="product__tab--btn__list" data-toggle="tab" data-target="#product_fresh">Fresh</li>
-                    <li class="product__tab--btn__list" data-toggle="tab" data-target="#product_fruits">Fruits </li>
-                    <li class="product__tab--btn__list" data-toggle="tab" data-target="#product_nature">Nature</li>
-                    <li class="product__tab--btn__list" data-toggle="tab" data-target="#product_recipies">Recipies </li>
-                    <li class="product__tab--btn__list" data-toggle="tab" data-target="#product_vegetable">Vegetable </li>
-                </ul>
                 <div class="tab_content">
                     <div id="product_all" class="tab_pane active show">
                         <div class="product__section--inner">
