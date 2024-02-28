@@ -90,7 +90,7 @@ class CharacteristicAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'characteristic_name')
 
 
-class Liked_ProductAdmin(admin.ModelAdmin):
+class WishlistAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'product', 'date')
     prepopulated_fields = {'slug': ('user', 'product')}
 
@@ -125,4 +125,4 @@ admin.site.register(Product_Images, Product_ImagesAdmin)
 admin.site.register(Products, ProductAdmin)
 admin.site.register(Comments, CommentsAdmin)
 admin.site.register(Characteristic, CharacteristicAdmin)
-admin.site.register(Liked_Product, Liked_ProductAdmin)
+admin.site.register(Wishlist, WishlistAdmin)

@@ -30,7 +30,6 @@ class Characteristic(models.Model):
         verbose_name_plural = 'Характеристи товаров'
 
 
-
 class Manufacturer(models.Model):
     manufacturer_name = models.CharField(max_length=100, verbose_name="Наименование производителя", unique=True)
     country = models.CharField(max_length=40, verbose_name='Страна', blank=True)
@@ -60,7 +59,6 @@ class Category(models.Model):
         verbose_name_plural = 'Категории продуктов'
 
 
-
 class Product_Images(models.Model):
     img_name = models.CharField(max_length=50, verbose_name='Название', blank=True)
     img = models.ImageField(upload_to='img_product/%Y/%m/%d/', verbose_name='Изображение продукта')
@@ -88,6 +86,8 @@ class Products(models.Model):
     discount = models.FloatField(verbose_name='Скидка', default=0, blank=True)
     last_price = models.IntegerField(verbose_name='Конечная  цена', blank=True, null=True)
     numbers = models.PositiveIntegerField(verbose_name='Количество продуктов', default=0)
+    back_to_main = models.BooleanField(verbose_name='На главную',  default=False)
+    date_add = models.DateField(verbose_name='Дата создания', auto_now_add=True, blank=True, null=True)
     category = models.ForeignKey('Category', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Категория')
     slug = models.SlugField(max_length=70, unique=True, db_index=True, verbose_name='URL', )
     description = models.TextField(verbose_name="О продукте", blank=True)
@@ -100,7 +100,6 @@ class Products(models.Model):
 
     def __str__(self):
         return self.product_name
-
 
     def save(self, *args, **kwargs):
         if self.discount > 0:
@@ -128,8 +127,7 @@ class Comments(models.Model):
         ordering = ['rating']
 
 
-
-class Liked_Product(models.Model):
+class Wishlist(models.Model):
     user = models.ForeignKey("Users", on_delete=models.CASCADE, verbose_name="Пользователь")
     product = models.ForeignKey("Products", on_delete=models.CASCADE, verbose_name="Продукт")
     slug = models.SlugField(verbose_name="URL", unique=True, blank=True)
@@ -139,9 +137,8 @@ class Liked_Product(models.Model):
         return f"{self.user}-{self.product}-{self.date}"
 
     def save(self, *args, **kwargs):
-
         self.slug = f"{self.user} {self.product}"
-        super(Liked_Product, self).save(*args, **kwargs)
+        super(Wishlist, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Понравившийся продукты'
@@ -172,8 +169,6 @@ class Order_Points(models.Model):
         verbose_name_plural = "Пункты заказов"
 
 
-
-
 class Orders(models.Model):
     status_field = (
         ("Не оплачено", "Не оплачено"),
@@ -183,7 +178,7 @@ class Orders(models.Model):
     user = models.ForeignKey('Users', on_delete=models.PROTECT, verbose_name='Пользователь')
     order_points = SortedManyToManyField(Order_Points, verbose_name="Пункт заказа")
     price = models.IntegerField(blank=True, verbose_name='Цена заказа')
-    status = models.CharField(max_length=50, verbose_name='Статус', default='Не оплачено', choices=status_field )
+    status = models.CharField(max_length=50, verbose_name='Статус', default='Не оплачено', choices=status_field)
     date = models.DateTimeField(auto_now_add=True, verbose_name="Время заказа")
 
     class Meta:

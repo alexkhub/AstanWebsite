@@ -32,7 +32,7 @@ class HomeProductsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Products
         read_only = ('owner.username',)
-        exclude = ('numbers', 'product_characteristic', 'first_price', 'description', 'manufacturer', 'category')
+        exclude = ('numbers', 'product_characteristic', 'description', 'manufacturer', 'category')
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
@@ -60,3 +60,15 @@ class ProductsListSerializer(serializers.ModelSerializer):
         model = Products
         read_only = ('owner.username',)
         exclude = ('numbers', 'product_characteristic', 'first_price', 'description',)
+
+
+class ProductDetailSerializer(serializers.ModelSerializer):
+    """сериализатор для вывода продукта"""
+    category = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    manufacturer = serializers.SlugRelatedField(slug_field='manufacturer_name', read_only=True)
+    product_photos = ProductImagesListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Products
+        read_only = ('owner.username',)
+        exclude = ('numbers', 'product_characteristic',)
