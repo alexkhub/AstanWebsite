@@ -28,7 +28,9 @@
         <!-- Start login section  -->
         <div class="login__section section--padding mb-80">
             <div class="container">
-                <form action="#">
+
+                <form action="/auth/login/" method="post">
+                    {% csrf_token %}
                     <div class="login__section--inner">
                         <div class="row row-cols-md-2 row-cols-1">
                             <div class="col">
@@ -39,10 +41,10 @@
                                     </div>
                                     <div class="account__login--inner">
                                         <label>
-                                            <input class="account__login--input" placeholder="Email Addres" type="email">
+                                            <input class="account__login--input" placeholder="Email Addres" name="username" type="text">
                                         </label>
                                         <label>
-                                            <input class="account__login--input" placeholder="Password" type="password">
+                                            <input class="account__login--input" placeholder="Password"  name="password" type="password">
                                         </label>
                                         <div class="account__login--remember__forgot mb-15 d-flex justify-content-between align-items-center">
                                             <div class="account__login--remember position__relative">
@@ -51,7 +53,7 @@
                                                 <label class="checkout__checkbox--label login__remember--label" for="check1">
                                                     Remember me</label>
                                             </div>
-                                            <button class="account__login--forgot"  type="submit">Forgot Your Password?</button>
+                                            <button class="account__login--forgot"  type="submit"></button>
                                         </div>
                                         <button class="account__login--btn btn" type="submit">Login</button>
                                         <div class="account__login--divide">
@@ -66,7 +68,11 @@
                                     </div>
                                 </div>
                             </div>
+                        </form>
+
+                            <form action="#" method="post">
                             <div class="col">
+                            {% csrf_token %}
                                 <div class="account__login register">
                                     <div class="account__login--header mb-25">
                                         <h2 class="account__login--header__title h3 mb-10">Create an Account</h2>
@@ -74,16 +80,19 @@
                                     </div>
                                     <div class="account__login--inner">
                                         <label>
-                                            <input class="account__login--input" placeholder="Username" type="text">
+                                            <input class="account__login--input" placeholder="Username" name="username" type="text">
                                         </label>
                                         <label>
-                                            <input class="account__login--input" placeholder="Email Addres" type="email">
+                                            <input class="account__login--input" placeholder="Email Address" name="email" type="email">
+                                        </label>
+                                         <label>
+                                            <input class="account__login--input" placeholder="Phone" name="phone" type="email">
                                         </label>
                                         <label>
-                                            <input class="account__login--input" placeholder="Password" type="password">
+                                            <input class="account__login--input" placeholder="Password" name="password1" type="password">
                                         </label>
                                         <label>
-                                            <input class="account__login--input" placeholder="Confirm Password" type="password">
+                                            <input class="account__login--input" placeholder="Confirm Password" name="password2" type="password">
                                         </label>
                                         <button class="account__login--btn btn mb-10" type="submit">Submit & Register</button>
                                         <div class="account__login--remember position__relative">
@@ -95,57 +104,13 @@
                                     </div>
                                 </div>
                             </div>
+                            </form>
                         </div>
                     </div>
-                </form>
-            </div>     
-        </div>
-        <!-- End login section  -->
 
-        <!-- Start shipping section -->
-        <section class="shipping__section2 shipping__style3">
-            <div class="container">
-                <div class="shipping__section2--inner shipping__style3--inner d-flex justify-content-between">
-                    <div class="shipping__items2 d-flex align-items-center">
-                        <div class="shipping__items2--icon">
-                            <img class="display-block" src="assets/img/other/shipping1.png" alt="shipping img">
-                        </div>
-                        <div class="shipping__items2--content">
-                            <h2 class="shipping__items2--content__title h3">Shipping</h2>
-                            <p class="shipping__items2--content__desc">From handpicked sellers</p>
-                        </div>
-                    </div>
-                    <div class="shipping__items2 d-flex align-items-center">
-                        <div class="shipping__items2--icon">
-                            <img class="display-block" src="assets/img/other/shipping2.png" alt="shipping img">
-                        </div>
-                        <div class="shipping__items2--content">
-                            <h2 class="shipping__items2--content__title h3">Payment</h2>
-                            <p class="shipping__items2--content__desc">Visa, Paypal, Master</p>
-                        </div>
-                    </div>
-                    <div class="shipping__items2 d-flex align-items-center">
-                        <div class="shipping__items2--icon">
-                            <img class="display-block" src="assets/img/other/shipping3.png" alt="shipping img">
-                        </div>
-                        <div class="shipping__items2--content">
-                            <h2 class="shipping__items2--content__title h3">Return</h2>
-                            <p class="shipping__items2--content__desc">30 day guarantee</p>
-                        </div>
-                    </div>
-                    <div class="shipping__items2 d-flex align-items-center">
-                        <div class="shipping__items2--icon">
-                            <img class="display-block" src="assets/img/other/shipping4.png" alt="shipping img">
-                        </div>
-                        <div class="shipping__items2--content">
-                            <h2 class="shipping__items2--content__title h3">Support</h2>
-                            <p class="shipping__items2--content__desc">Support every time</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- End shipping section -->
+
+
+
 
     </main>
 
