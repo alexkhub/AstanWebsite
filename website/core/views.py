@@ -1,10 +1,13 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .utils import *
 from .models import *
@@ -17,13 +20,13 @@ class HomeListView(ListAPIView):
 
     def list(self, request, **kwargs):
         products = Products.objects.filter(Q(numbers__gt=0) & Q(back_to_main=True)).prefetch_related(
-            Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True ))).only(
+            Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True))).only(
             'id', 'numbers', 'product_photos', 'first_price', 'discount', 'product_name', 'last_price', 'slug',
             'back_to_main', 'date_add')[:12]
 
         new_products = Products.objects.filter(numbers__gt=0, ).prefetch_related(
             Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True))).only(
-            'id', 'numbers', 'product_photos', 'first_price','discount', 'product_name', 'last_price', 'slug',
+            'id', 'numbers', 'product_photos', 'first_price', 'discount', 'product_name', 'last_price', 'slug',
             'back_to_main', 'date_add').order_by('date_add')[:7]
         categories = Category.objects.all().only('slug', 'category_photo', 'name')
 
@@ -35,7 +38,7 @@ class HomeListView(ListAPIView):
 
         return Response(
             {'products_serializer': products_serializer.data,
-             'new_products_serializer' : new_products_serializer.data,
+             'new_products_serializer': new_products_serializer.data,
              'category_serializer': category_serializer.data,
              'manufacturer_serializer': manufacturer_serializer.data
              }
@@ -105,7 +108,70 @@ def add_product(request, id):
         )
         return redirect(url)
     else:
-        return redirect('basket')
+        return redirect('home')
+
+
+class CartListView(ListAPIView):
+    queryset = Order_Points.objects.filter(in_orders=False)
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'core/cart.html'
+    serializer_class = Order_PointsSerializer
+    permission_classes = [IsAuthenticated]
+
+    # lookup_field = 'slug'
+
+    def get_queryset(self):
+        self.queryset = self.queryset.filter(user=self.request.user).prefetch_related(
+            Prefetch('product', queryset=Products.objects.all().prefetch_related(
+                Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True)
+                         .only('img', 'first_img', 'img_name')))
+                     .only('id', 'numbers', 'product_photos', 'discount', 'product_name', 'description',
+                           'last_price', )
+                     ),
+            Prefetch('user', queryset=Users.objects.all().only('slug')),
+        )
+        return self.queryset
+
+    def list(self, request, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(
+            {
+                'order_points': serializer.data
+            }
+            # serializer.data
+        )
+
+
+class WishlistListView(ListAPIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'core/wishlist.html'
+    queryset = Wishlist.objects.all()
+    serializer_class = WishlistSerializer
+
+    def list(self, request, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(
+            {
+                'wishlist': serializer.data
+            }
+            # serializer.data
+        )
+
+class ProfileRetrieveView(RetrieveAPIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'core/my-account.html'
+    queryset = Users.objects.all().only('id', 'first_name', 'password', 'last_name',
+                                        'username', 'date_joined', 'phone', 'slug', )
+    serializer_class = UserSerializer
+    lookup_field = "slug"
+    permission_classes = (IsAuthenticated,)
+
+
+class LoginView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'core/login.html'
 
 
 @login_required(login_url='auth/login/')

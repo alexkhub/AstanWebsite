@@ -72,3 +72,38 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         model = Products
         read_only = ('owner.username',)
         exclude = ('numbers', 'product_characteristic',)
+
+
+class Order_Point_ProductSerializer(serializers.ModelSerializer):
+    ''''создание вложенного сериализатора'''
+    product_photos = ProductImagesListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Products
+        fields = ('product_name', 'description', 'product_photos', 'last_price')
+        read_only = ('owner.username',)
+
+
+class Order_PointsSerializer(serializers.ModelSerializer):
+    # серилизатор для вывода пунктов корзины
+    user = serializers.CharField(source='user.slug')
+    product = Order_Point_ProductSerializer(many=False, read_only=True)
+
+    # если у нас 1 объект писать many= False
+
+    class Meta:
+        model = Order_Points
+        fields = '__all__'
+
+
+class WishlistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wishlist
+        fields = '__all__'
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        read_only = ('owner.username',)
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'date_joined', 'phone')
