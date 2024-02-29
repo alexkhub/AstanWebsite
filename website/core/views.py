@@ -159,6 +159,7 @@ class WishlistListView(ListAPIView):
             # serializer.data
         )
 
+
 class ProfileRetrieveView(RetrieveAPIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/my-account.html'
@@ -172,6 +173,9 @@ class ProfileRetrieveView(RetrieveAPIView):
 class LoginView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/login.html'
+
+    def get(self, request, format=None):
+        return Response()
 
 
 @login_required(login_url='auth/login/')
