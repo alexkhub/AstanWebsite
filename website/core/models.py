@@ -118,7 +118,7 @@ class Comments(models.Model):
     user = models.ForeignKey('Users', on_delete=models.CASCADE, verbose_name="Пользователь")
     product = models.ForeignKey('Products', on_delete=models.CASCADE, verbose_name="Продукты", related_name='comments')
     text = models.TextField(verbose_name="Комментарий", blank=True)
-    rating = models.IntegerField(verbose_name='Оценка от 1 до 10 ')
+    rating = models.PositiveIntegerField(verbose_name='Оценка от 1 до 5', default=5)
     date = models.DateField(verbose_name='Время', auto_now_add=True, blank=True)
 
     class Meta:
@@ -141,8 +141,8 @@ class Wishlist(models.Model):
         super(Wishlist, self).save(*args, **kwargs)
 
     class Meta:
-        verbose_name = 'Понравившийся продукты'
-        verbose_name_plural = 'Понравившиеся продукты'
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранное'
 
 
 class Order_Points(models.Model):

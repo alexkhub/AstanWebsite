@@ -12,4 +12,6 @@ urlpatterns = [
     path('cart/', CartListView.as_view(), name='cart'),
     path('account/<slug:slug>/', ProfileRetrieveView.as_view(), name='account'),
     path('login/', LoginView.as_view(), name='login'),
+    path('remove_wishlist/<int:id>/', remove_wishlist, name='remove_wishlist'),
+    path('add_comment/', add_comment, name='add_comment'),
 ]

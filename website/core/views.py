@@ -9,6 +9,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .forms import CreateComment
 from .utils import *
 from .models import *
 from .serializers import *
@@ -82,33 +83,21 @@ class ProductRetrieveView(RetrieveAPIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/product-details.html'
     lookup_field = "slug"
-    queryset = Products.objects.prefetch_related(
-        Prefetch('manufacturer', queryset=Manufacturer.objects.all().only('manufacturer_name')),
-        Prefetch('category', queryset=Category.objects.all().only('name')),
-
-    ).only(
+    queryset = Products.objects.all().select_related('manufacturer',  'category').only(
         'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
         'product_name', 'last_price', 'description', 'first_price', 'slug')
     serializer_class = ProductDetailSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        product_serializer = self.get_serializer(self.get_object())
-        return Response({'product': product_serializer.data})
-
-
-@login_required(login_url='login')
-def add_product(request, id):
-    url = request.META.get('HTTP_REFERER')
-    product = Products.objects.get(id=id)
-    user = request.user
-    if not Order_Points.objects.filter(user=user, product=product, in_orders=False):
-        Order_Points.objects.create(
-            user=user,
-            product=product
-        )
-        return redirect(url)
-    else:
-        return redirect('home')
+        obj = self.get_object()
+        product_serializer = self.get_serializer(obj)
+        comment = Comments.objects.filter(product=obj).select_related('user')
+        comment_serializer = CommentSerializer(comment, many=True)
+        return Response({
+            'product': product_serializer.data,
+            'comments': comment_serializer.data,
+            'x' : [1, 2, 3, 4, 5]
+        })
 
 
 class CartListView(ListAPIView):
@@ -178,7 +167,22 @@ class LoginView(APIView):
         return Response()
 
 
-@login_required(login_url='auth/login/')
+@login_required(login_url='login')
+def add_product(request, id):
+    url = request.META.get('HTTP_REFERER')
+    product = Products.objects.get(id=id)
+    user = request.user
+    if not Order_Points.objects.filter(user=user, product=product, in_orders=False):
+        Order_Points.objects.create(
+            user=user,
+            product=product
+        )
+        return redirect(url)
+    else:
+        return redirect('home')
+
+
+@login_required(login_url='login')
 def add_wishlist(request, id):
     url = request.META.get('HTTP_REFERER')
     product = Products.objects.get(id=id)
@@ -191,3 +195,35 @@ def add_wishlist(request, id):
         return redirect(url)
     else:
         return redirect('home')
+
+
+@login_required(login_url='login')
+def remove_wishlist(request, id):
+    url = request.META.get('HTTP_REFERER')
+    order_point = Wishlist.objects.get(id=id)
+    user = request.user
+    if order_point.user == user:
+        order_point.delete()
+        return redirect(url)
+    else:
+        return redirect("home")
+
+@login_required(login_url='login')
+def add_comment(request):
+    if request.POST:
+        form = CreateComment(request.POST)
+        url = request.META.get('HTTP_REFERER')
+        product_slug = url.split('/')[-2]
+        if form.is_valid():
+            user = request.user
+            rating = form.data['rating']
+            product = Products.objects.get(slug=product_slug)
+            text = form.data['text']
+            Comments.objects.create(
+                user=user,
+                rating=rating,
+                product=product,
+                text=text
+            )
+
+        return redirect(url)

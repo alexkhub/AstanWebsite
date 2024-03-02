@@ -62,16 +62,23 @@ class ProductsListSerializer(serializers.ModelSerializer):
         exclude = ('numbers', 'product_characteristic', 'first_price', 'description',)
 
 
+class ProductCharacteristicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Characteristic
+        fields = '__all__'
+
+
 class ProductDetailSerializer(serializers.ModelSerializer):
     """сериализатор для вывода продукта"""
     category = serializers.SlugRelatedField(slug_field='name', read_only=True)
     manufacturer = serializers.SlugRelatedField(slug_field='manufacturer_name', read_only=True)
     product_photos = ProductImagesListSerializer(many=True, read_only=True)
+    product_characteristic = ProductCharacteristicSerializer(many=True, read_only=True)
 
     class Meta:
         model = Products
         read_only = ('owner.username',)
-        exclude = ('numbers', 'product_characteristic',)
+        exclude = ('numbers', 'date_add', 'back_to_main')
 
 
 class Order_Point_ProductSerializer(serializers.ModelSerializer):
@@ -80,7 +87,7 @@ class Order_Point_ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Products
-        fields = ('product_name', 'description', 'product_photos', 'last_price')
+        fields = ('id', 'product_name', 'product_photos', 'last_price', 'slug', 'numbers')
         read_only = ('owner.username',)
 
 
@@ -97,6 +104,8 @@ class Order_PointsSerializer(serializers.ModelSerializer):
 
 
 class WishlistSerializer(serializers.ModelSerializer):
+    product = Order_Point_ProductSerializer(many=False, read_only=True)
+
     class Meta:
         model = Wishlist
         fields = '__all__'
@@ -107,3 +116,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = Users
         read_only = ('owner.username',)
         fields = ('id', 'username', 'first_name', 'last_name', 'email', 'date_joined', 'phone')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    class Meta:
+        model = Comments
+        fields = '__all__'

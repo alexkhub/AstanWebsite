@@ -263,7 +263,7 @@
                                     </ul>
                                 </div>
                                 <div class="product__items--content text-center">
-                                    <a class="add__to--cart__btn" href="cart.html">+ Добавить в корзину</a>
+                                    <a class="add__to--cart__btn" href="{%url 'add_product' product.id%}">+ Добавить в корзину</a>
                                     <h3 class="product__items--content__title style2 h4"><a href="{%url 'show_product' product.slug%}">{{product.product_name}}</a></h3>
                                     <div class="product__items--price">
                                         {%if product.discount > 0 %}
