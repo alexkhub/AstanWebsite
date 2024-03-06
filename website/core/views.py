@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, Prefetch
-from django.shortcuts import redirect
+from django.db.models import Q, Prefetch, Sum
+from django.shortcuts import redirect, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import ListAPIView, RetrieveAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
@@ -83,7 +83,7 @@ class ProductRetrieveView(RetrieveAPIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/product-details.html'
     lookup_field = "slug"
-    queryset = Products.objects.all().select_related('manufacturer',  'category').only(
+    queryset = Products.objects.all().select_related('manufacturer', 'category').only(
         'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
         'product_name', 'last_price', 'description', 'first_price', 'slug')
     serializer_class = ProductDetailSerializer
@@ -96,7 +96,7 @@ class ProductRetrieveView(RetrieveAPIView):
         return Response({
             'product': product_serializer.data,
             'comments': comment_serializer.data,
-            'x' : [1, 2, 3, 4, 5]
+            'x': [1, 2, 3, 4, 5]
         })
 
 
@@ -115,7 +115,7 @@ class CartListView(ListAPIView):
                 Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True)
                          .only('img', 'first_img', 'img_name')))
                      .only('id', 'numbers', 'product_photos', 'discount', 'product_name', 'description',
-                           'last_price', )
+                           'last_price', "slug")
                      ),
             Prefetch('user', queryset=Users.objects.all().only('slug')),
         )
@@ -123,10 +123,13 @@ class CartListView(ListAPIView):
 
     def list(self, request, **kwargs):
         queryset = self.get_queryset()
+        manufacturer = Manufacturer.objects.all()
         serializer = self.get_serializer(queryset, many=True)
+        manufacturer_serializer = ManufacturerSerializer(manufacturer, many=True)
         return Response(
             {
-                'order_points': serializer.data
+                'order_points': serializer.data,
+                'manufacturers': manufacturer_serializer.data
             }
             # serializer.data
         )
@@ -169,44 +172,39 @@ class LoginView(APIView):
 
 @login_required(login_url='login')
 def add_product(request, id):
-    url = request.META.get('HTTP_REFERER')
     product = Products.objects.get(id=id)
-    user = request.user
-    if not Order_Points.objects.filter(user=user, product=product, in_orders=False):
+    if not Order_Points.objects.filter(user=request.user, product=product, in_orders=False):
         Order_Points.objects.create(
-            user=user,
+            user=request.user,
             product=product
         )
-        return redirect(url)
+        return redirect(request.META['HTTP_REFERER'])
     else:
         return redirect('home')
 
 
 @login_required(login_url='login')
 def add_wishlist(request, id):
-    url = request.META.get('HTTP_REFERER')
     product = Products.objects.get(id=id)
-    user = request.user
-    if not Wishlist.objects.filter(Q(user=user) & Q(product=product)).first():
+    if not Wishlist.objects.filter(Q(user=request.user) & Q(product=product)).first():
         Wishlist.objects.create(
-            user=user,
+            user=request.user,
             product=product
         )
-        return redirect(url)
+        return redirect(request.META['HTTP_REFERER'])
     else:
         return redirect('home')
 
 
 @login_required(login_url='login')
 def remove_wishlist(request, id):
-    url = request.META.get('HTTP_REFERER')
-    order_point = Wishlist.objects.get(id=id)
-    user = request.user
-    if order_point.user == user:
-        order_point.delete()
-        return redirect(url)
+    wishlist = Wishlist.objects.get(id=id)
+    if wishlist.user == request.user:
+        wishlist.delete()
+        return redirect(request.META['HTTP_REFERER'])
     else:
         return redirect("home")
+
 
 @login_required(login_url='login')
 def add_comment(request):
@@ -215,15 +213,54 @@ def add_comment(request):
         url = request.META.get('HTTP_REFERER')
         product_slug = url.split('/')[-2]
         if form.is_valid():
-            user = request.user
-            rating = form.data['rating']
             product = Products.objects.get(slug=product_slug)
-            text = form.data['text']
             Comments.objects.create(
-                user=user,
-                rating=rating,
+                user=request.user,
+                rating=form.data['rating'],
                 product=product,
-                text=text
+                text=form.data['text']
             )
-
         return redirect(url)
+
+
+def cart_point_plus(request, id):
+    cart_point = get_object_or_404(Order_Points, id=id)
+    cart_point.amount += 1
+    cart_point.save()
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def cart_point_minus(request, id):
+    cart_point = get_object_or_404(Order_Points, id=id)
+    if cart_point.amount > 1:
+        cart_point.amount -= 1
+        cart_point.save()
+
+    else:
+        cart_point.delete()
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def cart_point_remove(request, id):
+    cart_point = get_object_or_404(Order_Points, id=id)
+    cart_point.delete()
+    return redirect(request.META['HTTP_REFERER'])
+
+
+def create_order(request):
+    try:
+        cart_points = Order_Points.objects.filter(Q(in_orders=False) & Q(user=request.user))
+
+        order = Orders.objects.create(
+            user=request.user,
+            price=cart_points.aggregate(Sum("price"))['price__sum']
+        )
+        for cart_point in cart_points:
+            order.order_points.add(cart_point)
+        order.save()
+
+        cart_points.update(in_orders=True)
+    except BaseException:
+        pass
+
+    return redirect("home")

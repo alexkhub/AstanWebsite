@@ -14,4 +14,8 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('remove_wishlist/<int:id>/', remove_wishlist, name='remove_wishlist'),
     path('add_comment/', add_comment, name='add_comment'),
+    path('cart_point_plus/<int:id>/', cart_point_plus, name='cart_point_plus'),
+    path('cart_point_minus/<int:id>/', cart_point_minus, name='cart_point_minus'),
+    path('cart_point_remove/<int:id>/', cart_point_remove, name='cart_point_remove'),
+    path('create_order/', create_order, name='create_order')
 ]
