@@ -3,12 +3,21 @@ from django.contrib.auth.models import AbstractUser
 from sortedm2m.fields import SortedManyToManyField
 from autoslug import AutoSlugField
 
+PAYMENT_STATYS_FIELDS = (
+        ("Не оплачено", "Не оплачено"),
+        ("Оплачено", "Оплачено"),
+
+)
+FULFILLMENT_STATYS_FIELDS = (
+    ("Не собран", "Не собран"),
+    ("Собран", "Собран")
+)
+
 
 class Users(AbstractUser):
     phone = models.CharField(max_length=20, verbose_name="Телефон", blank=True)
     slug = AutoSlugField(populate_from='username', unique=True, db_index=True, verbose_name='URL', )
-    mailing_list = models.BooleanField(default=False, blank=True, verbose_name='Рассылка')
-    address = models.CharField(max_length=150, blank=True, verbose_name='Адрес', null=True)
+
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -170,16 +179,13 @@ class Order_Points(models.Model):
 
 
 class Orders(models.Model):
-    status_field = (
-        ("Не оплачено", "Не оплачено"),
-        ("Оплачено", "Оплачено"),
 
-    )
     user = models.ForeignKey('Users', on_delete=models.PROTECT, verbose_name='Пользователь')
     order_points = SortedManyToManyField(Order_Points, verbose_name="Пункт заказа")
     price = models.IntegerField(blank=True, verbose_name='Цена заказа')
-    status = models.CharField(max_length=50, verbose_name='Статус', default='Не оплачено', choices=status_field)
+    payment_status = models.CharField(max_length=50, verbose_name='Статус оплаты', default='Не оплачено', choices=PAYMENT_STATYS_FIELDS)
     date = models.DateTimeField(auto_now_add=True, verbose_name="Время заказа")
+    fulfillment_status = models.CharField(max_length=50, verbose_name='Статус готовности', default='Не собран', choices=FULFILLMENT_STATYS_FIELDS)
 
     class Meta:
         verbose_name = 'Заказ'

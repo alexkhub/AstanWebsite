@@ -1,3 +1,4 @@
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Prefetch, Sum
@@ -148,7 +149,6 @@ class WishlistListView(ListAPIView):
             {
                 'wishlist': serializer.data
             }
-            # serializer.data
         )
 
 
@@ -160,6 +160,19 @@ class ProfileRetrieveView(RetrieveAPIView):
     serializer_class = UserSerializer
     lookup_field = "slug"
     permission_classes = (IsAuthenticated,)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        orders = Orders.objects.filter(user=instance)
+        orders_serializer = OrdersSerializer(orders, many=True)
+        serializer = self.get_serializer(instance)
+        return Response({
+            'user': serializer.data,
+            'orders' : orders_serializer.data
+        }
+        )
+
+
 
 
 class LoginView(APIView):
@@ -264,3 +277,8 @@ def create_order(request):
         pass
 
     return redirect("home")
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('home')
