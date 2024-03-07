@@ -43,8 +43,7 @@ class Manufacturer(models.Model):
     manufacturer_name = models.CharField(max_length=100, verbose_name="Наименование производителя", unique=True)
     country = models.CharField(max_length=40, verbose_name='Страна', blank=True)
     slug = models.SlugField(max_length=100, unique=True, db_index=True, verbose_name='URL', )
-    photo = models.ImageField(upload_to='img_category/%Y/%m/%d/', verbose_name='Фотография',
-                              default='shop/static/img/favicon.svg')
+    photo = models.ImageField(upload_to='img_category/%Y/%m/%d/', verbose_name='Фотография',)
 
     def __str__(self):
         return self.manufacturer_name

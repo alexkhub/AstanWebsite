@@ -59,7 +59,7 @@ class ProductsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Products
         read_only = ('owner.username',)
-        exclude = ('numbers', 'product_characteristic', 'first_price', 'description',)
+        exclude = ('numbers', 'product_characteristic', 'first_price', 'description', 'date_add', 'back_to_main')
 
 
 class ProductCharacteristicSerializer(serializers.ModelSerializer):
@@ -120,13 +120,30 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
+
     class Meta:
         model = Comments
         fields = '__all__'
 
 
 class OrdersSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Orders
         exclude = ('order_points',)
+
+
+
+class LoginSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Users
+        fields = ('username', 'password', 'phone' , 'email')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        password2 = validated_data.pop("password2")
+        user = Users.objects.create_user(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user

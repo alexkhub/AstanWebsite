@@ -7,23 +7,7 @@
 
     <main class="main__content_wrapper">
         
-        <!-- Start breadcrumb section -->
-        <section class="breadcrumb__section breadcrumb__bg">
-            <div class="container">
-                <div class="row row-cols-1">
-                    <div class="col">
-                        <div class="breadcrumb__content text-center">
-                            <h1 class="breadcrumb__content--title text-white mb-25">Account Page</h1>
-                            <ul class="breadcrumb__content--menu d-flex justify-content-center">
-                                <li class="breadcrumb__content--menu__items"><a class="text-white" href="index.html">Home</a></li>
-                                <li class="breadcrumb__content--menu__items"><span class="text-white">Account Page</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- End breadcrumb section -->
+
 
         <!-- Start login section  -->
         <div class="login__section section--padding mb-80">
@@ -36,71 +20,61 @@
                             <div class="col">
                                 <div class="account__login">
                                     <div class="account__login--header mb-25">
-                                        <h2 class="account__login--header__title h3 mb-10">Login</h2>
-                                        <p class="account__login--header__desc">Login if you area a returning customer.</p>
+                                        <h2 class="account__login--header__title h3 mb-10">Авторизация</h2>
+                                        <p class="account__login--header__desc">Чтобы получить полный доступ следует авторизоваться </p>
                                     </div>
                                     <div class="account__login--inner">
                                         <label>
-                                            <input class="account__login--input" placeholder="Email Addres" name="username" type="text">
+                                            <input class="account__login--input" placeholder="Никнейм" name="username" type="text">
                                         </label>
                                         <label>
-                                            <input class="account__login--input" placeholder="Password"  name="password" type="password">
+                                            <input class="account__login--input" placeholder="Пароль"  name="password" type="password">
                                         </label>
                                         <div class="account__login--remember__forgot mb-15 d-flex justify-content-between align-items-center">
-                                            <div class="account__login--remember position__relative">
-                                                <input class="checkout__checkbox--input" id="check1" type="checkbox">
-                                                <span class="checkout__checkbox--checkmark"></span>
-                                                <label class="checkout__checkbox--label login__remember--label" for="check1">
-                                                    Remember me</label>
-                                            </div>
+
                                             <button class="account__login--forgot"  type="submit"></button>
                                         </div>
-                                        <button class="account__login--btn btn" type="submit">Login</button>
+                                        <button class="account__login--btn btn" type="submit">Авторизоваться</button>
                                         <div class="account__login--divide">
-                                            <span class="account__login--divide__text">OR</span>
+                                            <span class="account__login--divide__text">Или</span>
                                         </div>
                                         <div class="account__social d-flex justify-content-center mb-15">
-                                            <a class="account__social--link facebook" target="_blank" href="https://www.facebook.com">Facebook</a>
+
                                             <a class="account__social--link google" target="_blank" href="https://www.google.com">Google</a>
-                                            <a class="account__social--link twitter" target="_blank" href="https://twitter.com">Twitter</a>
+                                            <a class="account__social--link twitter" target="_blank" href="https://vk.com/">VK</a>
                                         </div>
-                                        <p class="account__login--signup__text">Don,t Have an Account? <button type="submit">Sign up now</button></p>
+                                        <p class="account__login--signup__text">У вас нет учетной записи? <button type="submit">Войти сейчас</button></p>
                                     </div>
                                 </div>
                             </div>
                         </form>
 
-                            <form action="#" method="post">
+                            <form action="{%url 'login' %}" method="post">
                             <div class="col">
-                            {% csrf_token %}
+
                                 <div class="account__login register">
                                     <div class="account__login--header mb-25">
-                                        <h2 class="account__login--header__title h3 mb-10">Create an Account</h2>
-                                        <p class="account__login--header__desc">Register here if you are a new customer</p>
+                                        <h2 class="account__login--header__title h3 mb-10">Создать аккаунт</h2>
+                                        <p class="account__login--header__desc">Зарегистрируйтесь здесь, если вы новый клиент</p>
                                     </div>
                                     <div class="account__login--inner">
                                         <label>
-                                            <input class="account__login--input" placeholder="Username" name="username" type="text">
+                                            <input class="account__login--input" placeholder="Никнейм" name="username" type="text">
                                         </label>
                                         <label>
-                                            <input class="account__login--input" placeholder="Email Address" name="email" type="email">
+                                            <input class="account__login--input" placeholder="Адрес электронной почты" name="email" type="email">
                                         </label>
                                          <label>
-                                            <input class="account__login--input" placeholder="Phone" name="phone" type="email">
+                                            <input class="account__login--input" placeholder="Номер телефона " name="phone" type="text">
                                         </label>
                                         <label>
-                                            <input class="account__login--input" placeholder="Password" name="password1" type="password">
+                                            <input class="account__login--input" placeholder="Пароль" name="password1" type="password">
                                         </label>
                                         <label>
-                                            <input class="account__login--input" placeholder="Confirm Password" name="password2" type="password">
+                                            <input class="account__login--input" placeholder="Подтвердить пароль" name="password2" type="password">
                                         </label>
-                                        <button class="account__login--btn btn mb-10" type="submit">Submit & Register</button>
-                                        <div class="account__login--remember position__relative">
-                                            <input class="checkout__checkbox--input" id="check2" type="checkbox">
-                                            <span class="checkout__checkbox--checkmark"></span>
-                                            <label class="checkout__checkbox--label login__remember--label" for="check2">
-                                                I have read and agree to the terms & conditions</label>
-                                        </div>
+                                        <button class="account__login--btn btn mb-10" type="submit">Отправить и зарегистрироваться</button>
+
                                     </div>
                                 </div>
                             </div>
