@@ -59,7 +59,7 @@ class ProductsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Products
         read_only = ('owner.username',)
-        exclude = ('numbers', 'product_characteristic', 'first_price', 'description', 'date_add', 'back_to_main')
+        exclude = ('numbers', 'product_characteristic',  'description', 'date_add', 'back_to_main')
 
 
 class ProductCharacteristicSerializer(serializers.ModelSerializer):

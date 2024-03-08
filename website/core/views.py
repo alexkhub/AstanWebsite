@@ -54,13 +54,14 @@ class CategoryListAPIView(ListAPIView):
         Prefetch('category', queryset=Category.objects.all().only('slug', 'name'))
     ).only(
         'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
-        'product_name', 'last_price', 'slug')
+        'product_name', 'last_price', 'first_price', 'slug')
     #
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/shop.html'
 
     serializer_class = ProductsListSerializer
     filter_backends = (DjangoFilterBackend,)
+    filterset_class = PriceFilter
 
 
     def get_queryset(self):
@@ -87,13 +88,14 @@ class BrandsListAPIView(ListAPIView):
         Prefetch('category', queryset=Category.objects.all().only('slug', 'name'))
     ).only(
         'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
-        'product_name', 'last_price', 'slug')
+        'product_name', 'last_price', 'first_price', 'slug')
     #
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/shop.html'
 
     serializer_class = ProductsListSerializer
     filter_backends = (DjangoFilterBackend,)
+    filterset_class = PriceFilter
 
 
     def get_queryset(self):
@@ -232,9 +234,11 @@ class ShopListView(ListAPIView):
         Prefetch('category', queryset=Category.objects.all().only('slug', 'name'))
     ).only(
         'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
-        'product_name', 'last_price', 'slug')
+        'product_name', 'last_price', 'first_price','slug' )
 
     serializer_class = ProductsListSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = PriceFilter
 
 
     def list(self, request, *args, **kwargs):
