@@ -20,5 +20,6 @@ urlpatterns = [
     path('cart_point_minus/<int:id>/', cart_point_minus, name='cart_point_minus'),
     path('cart_point_remove/<int:id>/', cart_point_remove, name='cart_point_remove'),
     path('create_order/', create_order, name='create_order'),
-    path('logout/', logout_user, name='logout')
+    path('logout/', logout_user, name='logout'),
+    path('search_product', SearchProductListView.as_view(), name='search_product'),
 ]

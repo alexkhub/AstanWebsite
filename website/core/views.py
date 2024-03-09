@@ -257,6 +257,32 @@ class ShopListView(ListAPIView):
 
 
 
+class SearchProductListView(ListAPIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'core/shop.html'
+
+    queryset = Products.objects.filter(numbers__gt=0).prefetch_related(
+        Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True)),
+        Prefetch('manufacturer', queryset=Manufacturer.objects.all().only('slug')),
+        Prefetch('category', queryset=Category.objects.all().only('slug'))
+    ).only(
+        'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
+        'product_name', 'last_price', 'slug')
+
+    serializer_class = ProductsListSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = PriceFilter
+
+    def get_queryset(self):
+        self.queryset = self.queryset.filter(product_name__contains=self.request.GET.get('header-search'))
+        return self.queryset
+
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer_products = self.get_serializer(queryset, many=True)
+
+        return Response({'products': serializer_products.data})
 
 
 

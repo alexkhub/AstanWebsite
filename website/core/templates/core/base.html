@@ -42,7 +42,7 @@
                         <h1 class="main__logo--title"><a class="main__logo--link" href="{%url 'home'%}"><img class="main__logo--img" src="{%static 'core/img/logo/nav-log.png' %}" alt="logo-img"></a></h1>
                     </div>
                     <div class="header__search--widget d-none d-lg-block header__sticky--none">
-                        <form class="d-flex header__search--form" action="#">
+                        <form class="d-flex header__search--form" action="{%url 'search_product'%}" method="get">
                         <div class="header__select--categories select">
                                 <select class="header__select--inner">
                                     <option selected value="1">Выберите категорию</option>
@@ -54,9 +54,9 @@
                             </div>
                             <div class="header__search--box">
                                 <label>
-                                    <input class="header__search--input" placeholder="Найти продукт" type="text">
+                                    <input class="header__search--input"  name="header-search" placeholder="Найти продукт" type="text">
                                 </label>
-                                <button class="header__search--button bg__secondary text-white" type="submit">Поиск</button>
+                                <button class="header__search--button bg__secondary text-white"   type="submit">Поиск</button>
                             </div>
                         </form>
                     </div>
