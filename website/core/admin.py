@@ -13,15 +13,15 @@ class UserAdmin(admin.ModelAdmin):
     list_editable = ('is_staff',)
 
 
-class ManufacturerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'manufacturer_name', 'country', 'get_image')
-    list_display_links = ('manufacturer_name',)
-    search_fields = ('manufacturer_name', 'country')
+class BrandsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'country', 'get_image')
+    list_display_links = ('name',)
+    search_fields = ('name', 'country')
     list_filter = ('country',)
-    prepopulated_fields = {"slug": ("manufacturer_name",)}
+    prepopulated_fields = {"slug": ("name",)}
 
     def get_image(self, obj):
-        return mark_safe(f'<img src={obj.photo.url} width="60" height="60"')
+        return mark_safe(f'<img src={obj.brand_photo.url} width="60" height="60"')
 
     get_image.short_description = "Логотип"
 
@@ -56,10 +56,10 @@ class Product_ImagesAdmin(admin.ModelAdmin):
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'product_name', 'first_price', 'last_price', 'discount', 'category', 'manufacturer')
+        'id', 'product_name', 'first_price', 'last_price', 'discount', 'category', 'brand')
     list_display_links = ('id', 'product_name')
     search_fields = ('product_name',)
-    list_filter = ('discount', 'category', 'manufacturer', 'last_price',)
+    list_filter = ('discount', 'category', 'brand', 'last_price',)
     list_editable = ('first_price', 'last_price', 'discount')
     prepopulated_fields = {'slug': ('product_name',)}
 
@@ -116,7 +116,7 @@ class OrdersAdmin(admin.ModelAdmin):
 admin.site.register(Order_Points, Order_PointsAdmin)
 admin.site.register(Orders, OrdersAdmin)
 admin.site.register(Users, UserAdmin)
-admin.site.register(Manufacturer, ManufacturerAdmin)
+admin.site.register(Brands, BrandsAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product_Images, Product_ImagesAdmin)
 admin.site.register(Products, ProductAdmin)

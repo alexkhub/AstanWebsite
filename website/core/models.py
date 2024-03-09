@@ -4,8 +4,8 @@ from sortedm2m.fields import SortedManyToManyField
 from autoslug import AutoSlugField
 
 PAYMENT_STATYS_FIELDS = (
-        ("Не оплачено", "Не оплачено"),
-        ("Оплачено", "Оплачено"),
+    ("Не оплачено", "Не оплачено"),
+    ("Оплачено", "Оплачено"),
 
 )
 FULFILLMENT_STATYS_FIELDS = (
@@ -17,7 +17,6 @@ FULFILLMENT_STATYS_FIELDS = (
 class Users(AbstractUser):
     phone = models.CharField(max_length=20, verbose_name="Телефон", blank=True)
     slug = AutoSlugField(populate_from='username', unique=True, db_index=True, verbose_name='URL', )
-
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -39,22 +38,22 @@ class Characteristic(models.Model):
         verbose_name_plural = 'Характеристи товаров'
 
 
-class Manufacturer(models.Model):
-    manufacturer_name = models.CharField(max_length=100, verbose_name="Наименование производителя", unique=True)
+class Brands(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Бренд", unique=True)
     country = models.CharField(max_length=40, verbose_name='Страна', blank=True)
     slug = models.SlugField(max_length=100, unique=True, db_index=True, verbose_name='URL', )
-    photo = models.ImageField(upload_to='img_category/%Y/%m/%d/', verbose_name='Фотография',)
+    brand_photo = models.ImageField(upload_to='img_category/%Y/%m/%d/', verbose_name='Фотография', )
 
     def __str__(self):
-        return self.manufacturer_name
+        return self.name
 
     class Meta:
-        verbose_name = 'Производитель'
-        verbose_name_plural = 'Производители'
+        verbose_name = 'Бренд'
+        verbose_name_plural = 'Бренды'
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=60, db_index=True, verbose_name="Название категории", )
+    name = models.CharField(max_length=60, db_index=True, verbose_name="Категория", )
     description = models.TextField(verbose_name="Описание", blank=True)
     slug = models.SlugField(max_length=100, unique=True, db_index=True, verbose_name='URL', )
     category_photo = models.ImageField(upload_to='img_category/%Y/%m/%d/', verbose_name='Изображение категории')
@@ -94,13 +93,13 @@ class Products(models.Model):
     discount = models.FloatField(verbose_name='Скидка', default=0, blank=True)
     last_price = models.IntegerField(verbose_name='Конечная  цена', blank=True, null=True)
     numbers = models.PositiveIntegerField(verbose_name='Количество продуктов', default=0)
-    back_to_main = models.BooleanField(verbose_name='На главную',  default=False)
+    back_to_main = models.BooleanField(verbose_name='На главную', default=False)
     date_add = models.DateField(verbose_name='Дата создания', auto_now_add=True, blank=True, null=True)
     category = models.ForeignKey('Category', on_delete=models.CASCADE, null=True, blank=True, verbose_name='Категория')
     slug = models.SlugField(max_length=70, unique=True, db_index=True, verbose_name='URL', )
     description = models.TextField(verbose_name="О продукте", blank=True)
-    manufacturer = models.ForeignKey('Manufacturer', on_delete=models.PROTECT, null=True, verbose_name='Производитель',
-                                     related_name='manufacturer')
+    brand = models.ForeignKey('Brands', on_delete=models.PROTECT, null=True, verbose_name='Производитель',
+                              related_name='brand')
     product_photos = SortedManyToManyField(Product_Images, verbose_name='Изображения', related_name='images',
                                            blank=True, )
     product_characteristic = SortedManyToManyField(Characteristic, verbose_name='Характеристики',
@@ -178,13 +177,14 @@ class Order_Points(models.Model):
 
 
 class Orders(models.Model):
-
     user = models.ForeignKey('Users', on_delete=models.PROTECT, verbose_name='Пользователь')
     order_points = SortedManyToManyField(Order_Points, verbose_name="Пункт заказа")
     price = models.IntegerField(blank=True, verbose_name='Цена заказа')
-    payment_status = models.CharField(max_length=50, verbose_name='Статус оплаты', default='Не оплачено', choices=PAYMENT_STATYS_FIELDS)
+    payment_status = models.CharField(max_length=50, verbose_name='Статус оплаты', default='Не оплачено',
+                                      choices=PAYMENT_STATYS_FIELDS)
     date = models.DateTimeField(auto_now_add=True, verbose_name="Время заказа")
-    fulfillment_status = models.CharField(max_length=50, verbose_name='Статус готовности', default='Не собран', choices=FULFILLMENT_STATYS_FIELDS)
+    fulfillment_status = models.CharField(max_length=50, verbose_name='Статус готовности', default='Не собран',
+                                          choices=FULFILLMENT_STATYS_FIELDS)
 
     class Meta:
         verbose_name = 'Заказ'

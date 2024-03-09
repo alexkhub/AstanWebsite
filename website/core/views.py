@@ -32,8 +32,8 @@ class HomeListView(ListAPIView):
             'back_to_main', 'date_add').order_by('date_add')[:7]
         categories = Category.objects.all().only('slug', 'category_photo', 'name')
 
-        manufacturer = Manufacturer.objects.all().only('slug', 'photo', 'manufacturer_name')
-        manufacturer_serializer = ManufacturerSerializer(manufacturer, many=True)
+        brands = Brands.objects.all().only('slug', 'brand_photo', 'name')
+        brands_serializer = BrandsSerializer(brands, many=True)
         products_serializer = HomeProductsListSerializer(products, many=True)
         new_products_serializer = HomeProductsListSerializer(new_products, many=True)
         category_serializer = CategoryListSerializer(categories, many=True)
@@ -42,7 +42,7 @@ class HomeListView(ListAPIView):
             {'products_serializer': products_serializer.data,
              'new_products_serializer': new_products_serializer.data,
              'category_serializer': category_serializer.data,
-             'manufacturer_serializer': manufacturer_serializer.data
+             'brand_serializer': brands_serializer.data
              }
         )
 
@@ -50,12 +50,11 @@ class HomeListView(ListAPIView):
 class CategoryListAPIView(ListAPIView):
     queryset = Products.objects.filter(numbers__gt=0).prefetch_related(
         Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True)),
-        Prefetch('manufacturer', queryset=Manufacturer.objects.all().only('slug')),
-        Prefetch('category', queryset=Category.objects.all().only('slug', 'name'))
-    ).only(
-        'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
+
+    ).select_related('brand', 'category').only(
+        'id', 'numbers', 'brand', 'product_photos', 'category', 'discount',
         'product_name', 'last_price', 'first_price', 'slug')
-    #
+
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/shop.html'
 
@@ -71,25 +70,23 @@ class CategoryListAPIView(ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         categories = Category.objects.all().only('slug', 'category_photo', 'name')
-        manufacturer = Manufacturer.objects.all().only('slug', 'photo', 'manufacturer_name')
-        manufacturer_serializer = ManufacturerSerializer(manufacturer, many=True)
+        brand = Brands.objects.all().only('slug', 'brand_photo', 'name')
+        brand_serializer = BrandsSerializer(brand, many=True)
         category_serializer = CategoryListSerializer(categories, many=True)
         serializer_products = self.get_serializer(queryset, many=True)
         return Response({'products': serializer_products.data,
                          'categories': category_serializer.data,
-                         'manufacturers': manufacturer_serializer.data
+                         'brands': brand_serializer.data
                          })
 
 
 class BrandsListAPIView(ListAPIView):
     queryset = Products.objects.filter(numbers__gt=0).prefetch_related(
         Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True)),
-        Prefetch('manufacturer', queryset=Manufacturer.objects.all().only('slug')),
-        Prefetch('category', queryset=Category.objects.all().only('slug', 'name'))
-    ).only(
-        'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
+
+    ).select_related('brand', 'category').only(
+        'id', 'numbers', 'brand', 'product_photos', 'category', 'discount',
         'product_name', 'last_price', 'first_price', 'slug')
-    #
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/shop.html'
 
@@ -99,19 +96,19 @@ class BrandsListAPIView(ListAPIView):
 
 
     def get_queryset(self):
-        self.queryset = self.queryset.filter(category__slug=self.request.resolver_match.kwargs['brand_slug'])
+        self.queryset = self.queryset.filter(brand__slug=self.request.resolver_match.kwargs['brand_slug'])
         return self.queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         categories = Category.objects.all().only('slug', 'category_photo', 'name')
-        manufacturer = Manufacturer.objects.all().only('slug', 'photo', 'manufacturer_name')
-        manufacturer_serializer = ManufacturerSerializer(manufacturer, many=True)
+        brand = Brands.objects.all().only('slug', 'brand_photo', 'name')
+        brand_serializer = BrandsSerializer(brand, many=True)
         category_serializer = CategoryListSerializer(categories, many=True)
         serializer_products = self.get_serializer(queryset, many=True)
         return Response({'products': serializer_products.data,
                          'categories': category_serializer.data,
-                         'manufacturers': manufacturer_serializer.data
+                         'brands': brand_serializer.data
                          })
 
 
@@ -119,8 +116,8 @@ class ProductRetrieveView(RetrieveAPIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'core/product-details.html'
     lookup_field = "slug"
-    queryset = Products.objects.all().select_related('manufacturer', 'category').only(
-        'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
+    queryset = Products.objects.all().select_related('brand', 'category').only(
+        'id', 'numbers', 'brand', 'product_photos', 'category', 'discount',
         'product_name', 'last_price', 'description', 'first_price', 'slug')
     serializer_class = ProductDetailSerializer
 
@@ -159,15 +156,12 @@ class CartListView(ListAPIView):
 
     def list(self, request, **kwargs):
         queryset = self.get_queryset()
-        manufacturer = Manufacturer.objects.all()
         serializer = self.get_serializer(queryset, many=True)
-        manufacturer_serializer = ManufacturerSerializer(manufacturer, many=True)
+
         return Response(
             {
                 'order_points': serializer.data,
-                'manufacturers': manufacturer_serializer.data
             }
-            # serializer.data
         )
 
 
@@ -230,10 +224,9 @@ class ShopListView(ListAPIView):
 
     queryset = Products.objects.filter(numbers__gt=0).prefetch_related(
         Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True)),
-        Prefetch('manufacturer', queryset=Manufacturer.objects.all().only('slug')),
-        Prefetch('category', queryset=Category.objects.all().only('slug', 'name'))
-    ).only(
-        'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
+
+    ).select_related('category' , 'brand').only(
+        'id', 'numbers', 'brand', 'product_photos', 'category', 'discount',
         'product_name', 'last_price', 'first_price','slug' )
 
     serializer_class = ProductsListSerializer
@@ -244,14 +237,14 @@ class ShopListView(ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         categories = Category.objects.all().only('slug', 'category_photo', 'name')
-        manufacturer = Manufacturer.objects.all().only('slug', 'photo', 'manufacturer_name')
+        brand = Brands.objects.all().only('slug', 'brand_photo', 'name')
         serializer_products = self.get_serializer(queryset, many=True)
-        manufacturer_serializer = ManufacturerSerializer(manufacturer, many=True)
+        brand_serializer = BrandsSerializer(brand, many=True)
         category_serializer = CategoryListSerializer(categories, many=True)
 
         return Response({'products': serializer_products.data,
                          'categories': category_serializer.data,
-                         'manufacturers': manufacturer_serializer.data
+                         'brands': brand_serializer.data
                          }
                         )
 
@@ -263,12 +256,10 @@ class SearchProductListView(ListAPIView):
 
     queryset = Products.objects.filter(numbers__gt=0).prefetch_related(
         Prefetch('product_photos', queryset=Product_Images.objects.filter(first_img=True)),
-        Prefetch('manufacturer', queryset=Manufacturer.objects.all().only('slug')),
-        Prefetch('category', queryset=Category.objects.all().only('slug'))
-    ).only(
-        'id', 'numbers', 'manufacturer', 'product_photos', 'category', 'discount',
-        'product_name', 'last_price', 'slug')
 
+    ).select_related('category', 'brand').only(
+        'id', 'numbers', 'brand', 'product_photos', 'category', 'discount',
+        'product_name', 'last_price', 'first_price', 'slug')
     serializer_class = ProductsListSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = PriceFilter
@@ -280,10 +271,17 @@ class SearchProductListView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
+        categories = Category.objects.all().only('slug', 'category_photo', 'name')
+        brand = Brands.objects.all().only('slug', 'brand_photo', 'name')
         serializer_products = self.get_serializer(queryset, many=True)
+        brand_serializer = BrandsSerializer(brand, many=True)
+        category_serializer = CategoryListSerializer(categories, many=True)
 
-        return Response({'products': serializer_products.data})
-
+        return Response({'products': serializer_products.data,
+                         'categories': category_serializer.data,
+                         'brands': brand_serializer.data
+                         }
+                        )
 
 
 @login_required(login_url='login')

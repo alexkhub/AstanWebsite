@@ -35,8 +35,8 @@
                            <div class="single__widget widget__bg">
                                 <h2 class="widget__title h3">Бренды</h2>
                                 <ul class="widget__tagcloud">
-                                   {%for manufacturer in manufacturers%}
-                                    <li class="widget__tagcloud--list"><a class="widget__tagcloud--link" href="{%url 'product_brand' manufacturer.slug %}">{{manufacturer.manufacturer_name}} </a></li>
+                                   {%for brand in brands%}
+                                    <li class="widget__tagcloud--list"><a class="widget__tagcloud--link" href="{%url 'product_brand' brand.slug %}">{{brand.name}} </a></li>
                                     {%endfor%}
                                 </ul>
                             </div>

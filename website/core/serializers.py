@@ -32,7 +32,7 @@ class HomeProductsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Products
         read_only = ('owner.username',)
-        exclude = ('numbers', 'product_characteristic', 'description', 'manufacturer', 'category')
+        exclude = ('numbers', 'product_characteristic', 'description', 'brand', 'category')
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
@@ -43,11 +43,11 @@ class CategoryListSerializer(serializers.ModelSerializer):
         fields = ('slug', 'category_photo', 'name')
 
 
-class ManufacturerSerializer(serializers.ModelSerializer):
+class BrandsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Manufacturer
+        model = Brands
         read_only = ('owner.username',)
-        fields = ("manufacturer_name", "slug", "photo")
+        fields = ("name", "slug", "brand_photo")
 
 
 class ProductsListSerializer(serializers.ModelSerializer):
